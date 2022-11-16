@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
-"""Assignment 3"""
+"""Exercise 3"""
 
-# 3rd party libs
-import copy
-import math
+# 3rd party libraries
 import cv2
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -140,52 +138,39 @@ def label_in_neighborhood(point, labels):
 def main():
     """Main function"""
     # ------------------------------ Task 1 ------------------------------ #
-
-    task_1_image_1 = cv2.imread("inputEx5_1.jpg")
-    task_1_image_2 = cv2.imread("inputEx5_2.jpg")
-    task_1_image_1 = cv2.cvtColor(task_1_image_1, cv2.COLOR_BGR2RGB)
-    task_1_image_2 = cv2.cvtColor(task_1_image_2, cv2.COLOR_BGR2RGB)
-    task_1_image_1 = task_1_image_1
-
-    task1_segmented_image_1 = k_mean_clustering(task_1_image_1, 16)
-    task1_segmented_image_2 = k_mean_clustering(task_1_image_2, 20)
-
-    # ------------------------------ Task 2 ------------------------------ #
-    # read image
-    task2_image_input = cv2.imread("inputEx5_2.jpg")
-    task2_image_input = cv2.cvtColor(task2_image_input, cv2.COLOR_BGR2RGB)
-    task2_image = cv2.imread("inputEx5_2.jpg", cv2.IMREAD_GRAYSCALE)
-
-    # normalizing image
-    task2_image = normalize_image(task2_image)
-
-    # calculate GoG kernels
-    Gx, Gy = calc_gog_kernels(np.std(task2_image))
-    # gradient images in x and y directions
-    Ix, Iy = convolute(Gx, Gy, task2_image)
-    # gradient magnitudes
-    task2_gradient_image = gradient_magnitude(Ix, Iy)
-    task2_gradient_image_copy = copy.deepcopy(task2_gradient_image)
-
-    # Seed Points
-    seeds = [[40, 110], [140, 90], [5, 60], [130, 20], [70, 30], [100, 130]]
-
-    # region growing
-    grown_img, labels = watershed(seeds, task2_gradient_image)
-
-    # ------------------------------ Figure Output ------------------------------ #
+    # widht = 1024
+    # heigth = 753
+    input_img = cv2.imread("Image_without_digital_watermark.jpg")
+    # change type from uint8 to float and normalize values between [0,1]
+    input_imgf_normalized = input_img.astype('float32') / 255.0
+    # if the image can not be split into 8x8 blocks perfectly, remove the remaining pixels
+    input_imgf_normalized = cv2.resize(input_imgf_normalized, (input_img.shape[1] - (input_img.shape[1] % 8),
+                                                               input_img.shape[0] - (input_img.shape[0] % 8)))
 
     # Define the number of plots here
     fig = plt.figure()
+
+    # dct output destination
+    dct_img = np.zeros(shape=input_img.shape, dtype=np.float32)
+
+    for x in range(0, input_imgf_normalized.shape[0] - 8, 8):
+        for y in range(0, input_imgf_normalized.shape[1] - 8, 8):
+            for rgb_channel in range(0, 3):
+                dct_img[x:x + 8, y:y + 8, rgb_channel] = cv2.dct(input_imgf_normalized[x:x + 8, y:y + 8, rgb_channel])
+
+    output_multiply = dct_img[0:8, 0:8, 0]
+    output_add = dct_img
 
     # Name plot
     plt.suptitle(
         "\nImage Analysis and Object Recognition: Assignment 4\n\n"
         "Marcus Almert, Luigi Portwich, Vladimir Spassov\n",
         fontsize=45)
-    ax1 = fig.add_subplot(3, 3, 1)
-    ax1.imshow(task_1_image_1)
-    ax1.set_title("Original 1", fontsize="30")
+
+    # plot images
+    ax1 = fig.add_subplot(1, 1, 1)
+    ax1.imshow(input_img)
+    ax1.set_title("Original Image", fontsize="30")
 
     ax2 = fig.add_subplot(3, 3, 2)
     ax2.imshow(task1_segmented_image_1)
