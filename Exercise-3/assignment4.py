@@ -55,7 +55,8 @@ def main():
                 dct_img[x:x + 8, y:y + 8, rgb_channel] = cv2.dct(input_imgf_normalized[x:x + 8, y:y + 8, rgb_channel])
 
     # create a plot
-    fig = plt.figure()
+    fig1 = plt.figure()
+    fig2 = plt.figure()
 
     # Name plot
     plt.suptitle(
@@ -114,21 +115,28 @@ def main():
                     multiplication_idct_quadrant3_img[x_origin:x_origin + 8, y_origin:y_origin + 8, rgb_channel] = multiplication_dct_quadrant3_img[x_origin:x_origin + 8, y_origin:y_origin + 8, rgb_channel]
                     multiplication_idct_quadrant4_img[x_origin:x_origin + 8, y_origin:y_origin + 8, rgb_channel] = multiplication_dct_quadrant4_img[x_origin:x_origin + 8, y_origin:y_origin + 8, rgb_channel]
 
+        # convert images from normalized floats to rgb uint8
+        multiplication_idct_quadrant1_img = (multiplication_dct_quadrant1_img * 255).astype(np.uint8)
+        multiplication_idct_quadrant2_img = (multiplication_dct_quadrant2_img * 255).astype(np.uint8)
+        multiplication_idct_quadrant3_img = (multiplication_dct_quadrant3_img * 255).astype(np.uint8)
+        multiplication_idct_quadrant4_img = (multiplication_dct_quadrant4_img * 255).astype(np.uint8)
+
+
         # plot images
-        ax1 = fig.add_subplot(10, 5, i*5+1)
-        ax1.imshow(input_img)
+        ax1 = fig1.add_subplot(10, 5, i*5+1)
+        ax1.imshow(multiplication_idct_quadrant1_img)
         ax1.set_title("Quadrant 1, Multiplication: " + str(constant), fontsize="30")
-        ax1 = fig.add_subplot(10, 5, i*5+2)
-        ax1.imshow(input_img)
+        ax1 = fig1.add_subplot(10, 5, i*5+2)
+        ax1.imshow(multiplication_idct_quadrant2_img)
         ax1.set_title("Quadrant 2, Multiplication: " + str(constant), fontsize="30")
-        ax1 = fig.add_subplot(10, 5, i*5+3)
+        ax1 = fig1.add_subplot(10, 5, i*5+3)
         ax1.imshow(input_img)
         ax1.set_title("Original Image", fontsize="30")
-        ax1 = fig.add_subplot(10, 5, i*5+4)
-        ax1.imshow(input_img)
+        ax1 = fig1.add_subplot(10, 5, i*5+4)
+        ax1.imshow(multiplication_idct_quadrant3_img)
         ax1.set_title("Quadrant 3, Multiplication: " + str(constant), fontsize="30")
-        ax1 = fig.add_subplot(10, 5, i*5+5)
-        ax1.imshow(input_img)
+        ax1 = fig1.add_subplot(10, 5, i*5+5)
+        ax1.imshow(multiplication_idct_quadrant4_img)
         ax1.set_title("Quadrant 4, Multiplication: " + str(constant), fontsize="30")
 
 
@@ -137,8 +145,8 @@ def main():
 
 
     # fig.tight_layout()
-    fig.show()
-    fig.savefig("output.pdf", dpi=1000)
+    fig1.show()
+    fig1.savefig("output.pdf", dpi=500)
 
 
 if __name__ == "__main__":
