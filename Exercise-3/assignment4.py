@@ -11,7 +11,7 @@ __author__ = "Marcus Jan Almert, Luigi Vinzenz Portwich, Vladimir Dimitrov Spass
 # M:119915, L:119649, V:119606
 
 # setting the figure size
-plt.rcParams["figure.figsize"] = (40, 30)
+plt.rcParams["figure.figsize"] = (60, 60)
 np.set_printoptions(precision=3)
 
 
@@ -21,6 +21,7 @@ def main():
     # widht = 1024
     # heigth = 753
     input_img = cv2.imread("Image_without_digital_watermark.jpg")
+    input_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2RGB)
     # change type from uint8 to float and normalize values between [0,1]
     input_imgf_normalized = input_img.astype('float32') / 255.0
     # if the image can not be split into 8x8 blocks perfectly, remove the remaining pixels
@@ -130,14 +131,14 @@ def main():
         ax1.imshow(input_img)
         ax1.set_title("Quadrant 4, Multiplication: " + str(constant), fontsize="30")
 
-    # plot images
-    ax1 = fig.add_subplot(1, 1, 1)
-    ax1.imshow(input_img)
-    ax1.set_title("Original Image", fontsize="30")
 
-    fig.tight_layout()
+
+
+
+
+    # fig.tight_layout()
     fig.show()
-    fig.savefig("output.pdf")
+    fig.savefig("output.pdf", dpi=1000)
 
 
 if __name__ == "__main__":
