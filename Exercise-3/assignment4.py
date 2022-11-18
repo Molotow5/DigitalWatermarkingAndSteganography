@@ -23,10 +23,13 @@ def main():
     input_img = cv2.imread("Image_without_digital_watermark.jpg")
     input_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2RGB)
     # change type from uint8 to float and normalize values between [0,1]
-    input_imgf_normalized = input_img.astype('float32') / 255.0
+
     # if the image can not be split into 8x8 blocks perfectly, remove the remaining pixels
-    input_imgf_normalized = cv2.resize(input_imgf_normalized, (input_img.shape[1] - (input_img.shape[1] % 8),
-                                                               input_img.shape[0] - (input_img.shape[0] % 8)))
+    height = input_img.shape[1] - (input_img.shape[1] % 8)
+    width = input_img.shape[0] - (input_img.shape[0] % 8)
+    input_imgf_normalized = input_img[0:width, 0:height]
+
+    input_imgf_normalized = input_imgf_normalized.astype('float32') / 255.0
 
     # dct output destination
     dct_img = np.zeros(shape=input_imgf_normalized.shape, dtype=np.float32)
@@ -54,6 +57,24 @@ def main():
         "\nImage Analysis and Object Recognition: Assignment 4\n\n"
         "Marcus Almert, Luigi Portwich, Vladimir Spassov\n",
         fontsize=45)
+
+    # for color_channel in range(0,3):
+    # x = 123
+    # ausschnitt = dct_img[0:int(width/2), 0:int(height/2)]
+    # idct_ausschnitt = np.zeros(shape=ausschnitt.shape, dtype=np.float32)
+    # # idct_ausschnitt[:, :, 0] = cv2.idct(ausschnitt[:, :, 0])
+    # idct_ausschnitt[:, :, 0] = cv2.idct(ausschnitt[:, :, 0])
+    # idct_ausschnitt[:, :, 1] = cv2.idct(ausschnitt[:, :, 1])
+    # idct_ausschnitt[:, :, 2] = cv2.idct(ausschnitt[:, :, 2])
+
+    idct = np.zeros(shape=input_imgf_normalized.shape, dtype=np.float32)
+    idct[:, :, 0] = cv2.idct(dct_img[:, :, 0])
+    idct[:, :, 1] = cv2.idct(dct_img[:, :, 1])
+    idct[:, :, 2] = cv2.idct(dct_img[:, :, 2])
+    idct = (idct * 255)
+    idct = cv2.cvtColor(idct, cv2.COLOR_BGR2RGB)
+    cv2.imwrite("ausschnitt2.jpg", idct)
+
 
     for i, constant in enumerate(multiplication_constants):
         multiplication_dct_quadrant1_img = \
@@ -159,7 +180,7 @@ def main():
 
     # fig.tight_layout()
     fig1.show()
-    fig1.savefig("output.pdf", dpi=400)
+    fig1.savefig("output.pdf", dpi=100)
 
 
 if __name__ == "__main__":
