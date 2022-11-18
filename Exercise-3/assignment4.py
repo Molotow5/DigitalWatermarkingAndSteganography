@@ -42,6 +42,9 @@ def main():
     dct_img[:, :, 1] = cv2.dct(input_imgf_normalized[:, :, 1])
     dct_img[:, :, 2] = cv2.dct(input_imgf_normalized[:, :, 2])
 
+    #dct_img[4:8, 0:4, :] += 50
+
+
     #for x in range(0, input_imgf_normalized.shape[0] - 8, 8):
     #    for y in range(0, input_imgf_normalized.shape[1] - 8, 8):
     #        for rgb_channel in range(0, 3):
